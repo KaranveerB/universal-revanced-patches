@@ -5,7 +5,7 @@ plugins {
     `maven-publish`
 }
 
-group = "your.org"
+group = "com.karanveerb"
 
 repositories {
     mavenCentral()
@@ -32,14 +32,14 @@ kotlin {
 
 tasks.withType(Jar::class) {
     manifest {
-        attributes["Name"] = "Your Patches"
-        attributes["Description"] = "Patches for ReVanced."
-        attributes["Version"] = version
+        attributes["Name"] = "Universal Patches"
+        attributes["Description"] = "Universal App Patches for ReVanced."
+        attributes["Version"] = project.findProperty("version")
         attributes["Timestamp"] = System.currentTimeMillis().toString()
-        attributes["Source"] = "git@github.com:you/revanced-patches.git"
-        attributes["Author"] = "You"
-        attributes["Contact"] = "contact@your.homepage"
-        attributes["Origin"] = "https://your.homepage"
+        attributes["Source"] = "git@github.com:KaranveerB/universal-revanced-patches.git"
+        attributes["Author"] = "KaranveerB"
+        attributes["Contact"] = "52545097+KaranveerB@users.noreply.github.com"
+        attributes["Origin"] = "https://github.com/KaranveerB/universal-revanced-patches"
         attributes["License"] = "GNU General Public License v3.0"
     }
 }
@@ -51,8 +51,11 @@ tasks {
         dependsOn(build)
 
         doLast {
-            val d8 = File(System.getenv("ANDROID_HOME")).resolve("build-tools")
-                .listFilesOrdered().last().resolve("d8").absolutePath
+            val win = System.getProperty("os.name").lowercase().contains("win")
+            val androidHome = System.getenv("ANDROID_HOME") ?: error("ANDROID_HOME is not set.")
+            val buildToolsDir = File(androidHome).resolve("build-tools").listFilesOrdered().last()
+
+            val d8 = buildToolsDir.resolve(if (win) "d8.bat" else "d8").absolutePath
 
             val artifacts = configurations.archives.get().allArtifacts.files.files.first().absolutePath
             val workingDirectory = layout.buildDirectory.dir("libs").get().asFile
@@ -69,10 +72,21 @@ tasks {
         }
     }
 
+    register<JavaExec>("generateMeta") {
+        description = "Generate metadata for this bundle"
+
+        dependsOn(build)
+
+        classpath = sourceSets["main"].runtimeClasspath
+        mainClass.set("app.revanced.meta.IPatchesFileGenerator")
+    }
+
+
     // Required to run tasks because Gradle semantic-release plugin runs the publish task.
     // Tracking: https://github.com/KengoTODA/gradle-semantic-release-plugin/issues/435
     named("publish") {
         dependsOn("generateBundle")
+        dependsOn("generateMeta")
     }
 }
 
@@ -82,9 +96,9 @@ publishing {
             from(components["java"])
 
             pom {
-                name = "Your Patches"
-                description = "Patches for ReVanced."
-                url = "https://your.homepage"
+                name = "Universal Patches"
+                description = "Universal App Patches for ReVanced."
+                url = "https://github.com/KaranveerB"
 
                 licenses {
                     license {
@@ -94,15 +108,15 @@ publishing {
                 }
                 developers {
                     developer {
-                        id = "Your ID"
-                        name = "Your Name"
-                        email = "contact@your.homepage"
+                        id = "KaranveerB"
+                        name = "KaranveerB"
+                        email = "52545097+KaranveerB@users.noreply.github.com"
                     }
                 }
                 scm {
-                    connection = "scm:git:git://github.com/you/revanced-patches.git"
-                    developerConnection = "scm:git:git@github.com:you/revanced-patches.git"
-                    url = "https://github.com/you/revanced-patches"
+                    connection = "scm:git:git://github.com/KaranveerB/universal-revanced-patches.git"
+                    developerConnection = "scm:git:git@github.com:KaranveerB/universal-revanced-patches.git"
+                    url = "https://github.com/KaranveerB/universal-revanced-patches"
                 }
             }
         }
