@@ -82,56 +82,6 @@ class ChangeIconPatch : ResourcePatch() {
                 readText().replace(getIconElement(context), "@mipmap/$newRoundIconName").let(::writeText)
             }
         }
-
-
-//        mipmapTypes.associateWith { dirSuffix ->
-//            ResourceGroup(
-//                "mipmap-$dirSuffix", "_ic_launcher" + File(iconPath).extension
-//            )
-//        }.let { resourceGroups ->
-//            val path = File(iconPathOption.value!!)
-//            val resourceDirectory = context["res"]
-//
-//            resourceGroups.forEach {group ->
-//                val toDir = resourceDirectory.resolve(group.resourceDirectoryName)
-//
-//                group.resources.forEach { iconFileName ->
-////                    Files.copy(path.toPath(), toDir.resolve(iconFileName).toPath(), StandardCopyOption.REPLACE_EXISTING)
-//                    Files.write(
-//                        toDir.resolve(iconFileName).toPath(),
-//                        path.readBytes(),
-//                    )
-//                }
-//            }
-//        }
-//
-//        context.getContentResolver()
-//
-//        val icons: Map<String>
-//
-//        val iconPath = iconPathOption.value!!
-//        val iconsFileObj = File(iconPath)
-//        val icons: Map<String, File> = if (iconsFileObj.isFile()) {
-//            mapOf(mipmapTypes.last() to iconsFileObj)
-//        } else {
-//            mipmapTypes.mapNotNull { mipmapType ->
-//                val matchingFile = iconsFileObj.listFiles { file ->
-//                    file.name.lowercase() == "$mipmapType.png"
-//                }?.firstOrNull()
-//                mipmapType.takeIf { matchingFile != null }?.let { mipmapType to matchingFile!! }
-//            }.toMap()
-//        }
-//
-//        if (icons.isEmpty()) {
-//            throw PatchException("Failed to find any icon files")
-//        }
-//
-//        icons.forEach { (mipmapKey, icon) ->
-//            Files.write(
-//                icon.toPath().resolve("_ic_launcher.png"),
-//                context["res"].resolve("mipmap-$mipmapKey").readBytes()
-//            )
-//        }
     }
 
     private fun getIconElement(context: ResourceContext): String {
